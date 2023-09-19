@@ -2,6 +2,6 @@ pandas
 numpy
 datetime
 matplotlib
-sklearn
+scikit-learn
 tensorflow
 streamlit
