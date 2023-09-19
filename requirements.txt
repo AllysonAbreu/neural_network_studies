@@ -1,0 +1,7 @@
+pandas
+numpy
+datetime
+matplotlib
+sklearn
+tensorflow
+streamlit
