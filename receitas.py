@@ -15,8 +15,8 @@ st.markdown('Este aplicativo tem como objetivo prever as receitas municipais do 
              'Para isso, foi utilizado um modelo de redes neurais recorrentes (RNN) do tipo LSTM (Long Short-Term Memory).')
 st.title('Acurácia do Modelo de Previsão de Receitas Municipais')
 
-image_path_01 = 'src/static/images/figura[2].png'
-image_path_02 = 'src/static/images/figura[3].png'
+image_path_01 = 'src/static/images/figura[4].png'
+image_path_02 = 'src/static/images/figura[5].png'
 
 # Verifique se as imagens existem
 if os.path.exists(image_path_01) and os.path.exists(image_path_02):
@@ -41,16 +41,7 @@ model_lstm, dados_receitas = load_model_and_data()
 dados_receitas['DATA'] = pd.to_datetime(dados_receitas['DATA'])
 dados_receitas['ANO_MES'] = dados_receitas['DATA'].dt.strftime('%Y-%m')
 dados_receitas['ANO'] = dados_receitas['DATA'].dt.year
-Q1 = dados_receitas['VALOR_ARRECADADO'].quantile(0.25)
-Q3 = dados_receitas['VALOR_ARRECADADO'].quantile(0.75)
-IQR = Q3 - Q1
-limite_inferior = Q1 - 1.5 * IQR
-limite_superior = Q3 + 1.5 * IQR
-df_sem_outliers = dados_receitas[(dados_receitas['VALOR_ARRECADADO'] >= limite_inferior) & (dados_receitas['VALOR_ARRECADADO'] <= limite_superior)]
-df_sem_outliers = df_sem_outliers[['ANO', 'VALOR_ARRECADADO']]
-df_sem_outliers = dados_receitas[(dados_receitas['VALOR_ARRECADADO'] >= limite_inferior) & (dados_receitas['VALOR_ARRECADADO'] <= limite_superior)]
-df_sem_outliers = df_sem_outliers.groupby(['ANO_MES', 'ANO'])['VALOR_ARRECADADO'].sum().reset_index()
-df_receitas = df_sem_outliers.copy()
+df_receitas = dados_receitas.groupby(['ANO_MES', 'ANO'])['VALOR_ARRECADADO'].sum().reset_index()
 df_receitas['SMA(12)'] = df_receitas['VALOR_ARRECADADO'].rolling(window=12).mean()
 df_receitas['SMA(6)'] = df_receitas['VALOR_ARRECADADO'].rolling(window=6).mean()
 df_receitas['SMA(3)'] = df_receitas['VALOR_ARRECADADO'].rolling(window=3).mean()
@@ -99,7 +90,7 @@ previsto = prediction_lstm.flatten()
 tabela = pd.DataFrame([real, previsto]).T
 tabela = tabela.rename(columns={0: 'Real', 1: 'Previsto'})
 tabela['Diferenca'] = 1 - (tabela['Real'] / tabela['Previsto'])
-media_tabela = tabela['Diferenca'].mean()
+media_tabela = (tabela['Diferenca'].mean() * 100)
 st.title(f'Erro médio percentual: {media_tabela:.2f}%')
 
 # Função para calcular a diferença entre as datas em meses
