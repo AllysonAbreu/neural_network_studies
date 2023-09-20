@@ -105,12 +105,18 @@ st.title(f'Erro médio percentual: {media_tabela:.2f}%')
 # Função para calcular a diferença entre as datas em meses
 def beteween_dates(input_date, df_date):
     date_01 = pd.to_datetime(input_date)
-    date_02 = pd.to_datetime(df_date)
-    return relativedelta(date_01, date_02).months
+    date_02 = dt.date.fromordinal(df_date)
+    years = relativedelta(date_01, date_02).years
+    months = relativedelta(date_01, date_02).months
+    if years > 0:
+        return (years * 12) + months
+    else:
+        return months
 
 # Função para realizar a previsão com base na data informada
 def predict_revenue(input_date, df_receitas, model_lstm):
     date_df = df_receitas.copy()
+    st.write(f"Previsão de Receitas para {beteween_dates(input_date, date_df['ANO_MES'].iloc[-1])} meses à frente do último arquivo da base de dados utilizada para treino do modelo.")
     for i in range(beteween_dates(input_date, date_df['ANO_MES'].iloc[-1])):
         # Crie uma nova linha de dados vazia
         row = pd.DataFrame(columns=date_df.columns)
