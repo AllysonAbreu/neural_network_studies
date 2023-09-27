@@ -81,10 +81,10 @@ def display_images():
     # Verifique se as imagens existem
     if os.path.exists(image_path_01) and os.path.exists(image_path_02):
         image_01 = Image.open(image_path_01)
-        st.image(image_01, caption='Figura 1: Gráfico de previsão de receitas municipais. Fonte: Elaboração própria.', width=800)
+        st.image(image_01, caption='Figura 1: Gráfico de previsão de receitas municipais, pesquisa e treinamento do modelo.\nFonte: Elaboração própria.', width=800)
 
         image_02 = Image.open(image_path_02)
-        st.image(image_02, caption='Figura 2: Distribuição de erros. Fonte: Elaboração própria.', width=800)
+        st.image(image_02, caption='Figura 2: Distribuição de erros.\nFonte: Elaboração própria.', width=800)
     else:
         st.error('Imagens não encontradas. Verifique os caminhos das imagens.')
 
@@ -126,14 +126,22 @@ def scale_data(df_sem_outliers):
     X = df_sem_outliers.drop(['VALOR_ARRECADADO'], axis=1)
     y = df_sem_outliers.loc[:, ['VALOR_ARRECADADO']]
 
+    st.write(X)
+    st.write(y)
+
     input_scaler = scaler_x.fit(X)
     output_scaler = scaler_y.fit(y)
 
     y_norm = output_scaler.transform(y)
     X_norm = input_scaler.transform(X)
 
+    st.write(X_norm)
+    st.write(y_norm)
+
     X = X_norm.reshape((X_norm.shape[0], 1, X_norm.shape[1]))
     y = y_norm.reshape((y_norm.shape[0], 1))
+    st.write(X)
+    st.write(y)
 
     y = scaler_y.inverse_transform(y)
     return X, y, input_scaler, output_scaler, scaler_y
@@ -146,6 +154,24 @@ def calculate_mean_error(y, y_pred):
     tabela['Diferenca'] = 1 - (tabela['Real'] / tabela['Previsto'])
     media_tabela = (tabela['Diferenca'].mean() * 100)
     return media_tabela
+
+def plot_future(prediction, y):
+    plt.figure(figsize=(10,6))
+    range_future = len(prediction)
+    plt.plot(np.arange(range_future), np.array(y), label='Dados reais')
+    plt.plot(np.arange(range_future), np.array(prediction),label='Predição')
+    plt.legend(loc='upper left')
+    plt.xlabel('Período')
+    plt.ylabel('Valor Arrecadado')
+    plt.title('Predição de Receitas - LSTM')
+    plt.savefig('src/static/images/figura[6].png')
+    image_path_03 = 'src/static/images/figura[6].png'
+    # Verifique se as imagens existem
+    if os.path.exists(image_path_03):
+        image_03 = Image.open(image_path_03)
+        st.image(image_03, caption='Figura 3: Gráfico de previsão de receitas municipais, dados e modelo atuais.\nFonte: Elaboração própria.', width=800)
+    else:
+        st.error('Imagens não encontradas. Verifique os caminhos das imagens.')
 
 # Funções Principais
 def main():
@@ -161,6 +187,7 @@ def main():
     df_sem_outliers = preprocess_data(dados_receitas)
     X, y, input_scaler, output_scaler, scaler_y = scale_data(df_sem_outliers)
     y_pred = prediction(model_lstm, X, scaler_y)
+    plot_future(y_pred, y)
     media_tabela = calculate_mean_error(y, y_pred)
     st.title(f'Erro médio percentual: {media_tabela:.2f}%')
 
