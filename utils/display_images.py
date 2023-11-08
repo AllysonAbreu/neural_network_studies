@@ -7,8 +7,8 @@ import numpy as np
 # Funções de Visualização
 def display_images():
     st.title('Acurácia do Modelo de Previsão de Receitas Municipais')
-    image_path_01 = 'src/static/images/figura[4].png'
-    image_path_02 = 'src/static/images/figura[5].png'
+    image_path_01 = 'src/static/images/receitas/figura[3].png'
+    image_path_02 = 'src/static/images/receitas/figura[5].png'
 
     # Verifique se as imagens existem
     if os.path.exists(image_path_01) and os.path.exists(image_path_02):
@@ -29,8 +29,8 @@ def plot_future(prediction, y):
     plt.xlabel('Período')
     plt.ylabel('Valor Arrecadado')
     plt.title('Predição de Receitas - LSTM')
-    plt.savefig('src/static/images/figura[6].png')
-    image_path_03 = 'src/static/images/figura[6].png'
+    plt.savefig('src/static/images/receitas/figura[6].png')
+    image_path_03 = 'src/static/images/receitas/figura[6].png'
     # Verifique se as imagens existem
     if os.path.exists(image_path_03):
         image_03 = Image.open(image_path_03)

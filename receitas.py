@@ -7,7 +7,7 @@ from utils import *
 @st.cache_data()
 def load_model_and_data():
     model_lstm = tf.keras.models.load_model('notebooks/v2/receitas_2013_2022')
-    dados_receitas = pd.read_csv('data/dados_receitas.csv', sep=';')
+    dados_receitas = pd.read_csv('data/dados_receitas_com_outliers.csv', sep=';')
     return model_lstm, dados_receitas
 
 # Funções Principais
