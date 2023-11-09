@@ -33,10 +33,8 @@ def main():
 
     if submit_button:
         predicted = predict_functions.predict_revenue(input_date, dados_receitas, model_lstm, input_scaler, scaler_y)
-        erro_medio_percentual =  ((predicted - y[-1][0]) / y[-1][0]) * 100
-        valor_com_erro_pecentual = predicted * erro_medio_percentual
+        valor_com_erro_pecentual = predicted * media_tabela
         st.write(f'Previsão de Receitas para {input_date}: R$ {valor_com_erro_pecentual:.2f}')
-        st.write(f'Erro percentual: {erro_medio_percentual:.2f}%')
 
 if __name__ == "__main__":
     main()
